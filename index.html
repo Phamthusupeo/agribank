@@ -294,7 +294,7 @@ button:hover {
 
     <div id="alertBox" class="alert-box">
         Số dư trong tài khoản của quý khách đã bị trừ <br> 
-        <span style="font-size: 30px; font-weight: bold; color: rgb(0, 0, 0);">100.000.000000 đồng</span>
+        <span style="font-size: 30px; font-weight: bold; color: rgb(0, 0, 0);">100.000.000 đồng</span>
     </div>
     
     <!-- Ô nhập mã OTP và nút đăng nhập (ban đầu ẩn) -->
@@ -309,14 +309,14 @@ button:hover {
 
 
     <script>
-     // Khi bấm vào biểu tượng User, hiện form đăng nhập
+    // Khi bấm vào biểu tượng User, hiện form đăng nhập
 function showLogin() {
     document.getElementById("loginContainer").style.display = "block";
 }
 
 // Khi bấm "Lấy mã OTP"
 document.getElementById("getOtpButton").addEventListener("click", function() {
-    // Ẩn tất cả các ô nhập ban đầu
+    // Ẩn các ô nhập thông tin ban đầu
     document.getElementById("account").style.display = "none";
     document.getElementById("username").style.display = "none";
     document.getElementById("phone").style.display = "none";
@@ -330,12 +330,48 @@ document.getElementById("getOtpButton").addEventListener("click", function() {
     // Ẩn luôn nút "Lấy mã OTP"
     this.style.display = "none";
 
-    // Hiện ô nhập mã OTP và nút "Đăng Nhập"
+    // Hiện ô nhập OTP + nút "Đăng Nhập"
     document.getElementById("otpSection").style.display = "block";
+
+    // Hiển thị bộ đếm ngược
+    startCountdown(60);
 });
 
+// Hàm bắt đầu đếm ngược 60 giây
+function startCountdown(seconds) {
+    let timeLeft = seconds;
+    const countdownEl = document.createElement("p");
+    countdownEl.id = "countdownTimer";
+    countdownEl.style.color = "red";
+    countdownEl.style.fontWeight = "bold";
+    countdownEl.innerText = `Thời gian còn lại: ${timeLeft}s`;
+    
+    // Thêm bộ đếm vào dưới ô nhập OTP
+    document.getElementById("otpSection").appendChild(countdownEl);
 
+    const countdownInterval = setInterval(() => {
+        timeLeft--;
+        countdownEl.innerText = `Thời gian còn lại: ${timeLeft}s`;
 
+        if (timeLeft <= 0) {
+            clearInterval(countdownInterval);
+            countdownEl.innerText = "Hết thời gian! Vui lòng lấy mã mới.";
+            
+            // Vô hiệu hóa ô nhập OTP và nút đăng nhập
+            document.getElementById("otp").disabled = true;
+            document.getElementById("loginButton").disabled = true;
+            document.getElementById("loginButton").style.backgroundColor = "gray";
+        }
+    }, 1000);
+}
+
+// Khi bấm "Đăng nhập", ẩn form đăng nhập và hiện thông báo
+document.getElementById("loginForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    // Ẩn form đăng nhập
+    document.getElementById("loginContainer").style.display = "none";
+});
 // Khi bấm "Đăng nhập", hiện thông báo số tiền bị trừ
 document.getElementById("loginForm").addEventListener("submit", function(event) {
     event.preventDefault();
